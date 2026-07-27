@@ -102,7 +102,7 @@ pricing, yield recovery, curve interpolation and portfolio-risk invariants.
 
 - Finite-difference PDE engine
 - Heston semi-analytic pricing and calibration
-- Interest-rate curves and fixed-income instruments
+- Bootstrapped curves, floating-rate instruments and interest-rate swaps
 - Sensitivity benchmarking and parallel Monte Carlo
 - Python bindings for comparison with the native C++ engine
 
