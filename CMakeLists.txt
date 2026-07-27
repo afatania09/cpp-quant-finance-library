@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(cpp_quant_finance_library VERSION 1.0.0 LANGUAGES CXX)
+project(cpp_quant_finance_library VERSION 2.0.0 LANGUAGES CXX)
 
 option(QF_BUILD_TESTS "Build the test suite" ON)
 option(QF_BUILD_EXAMPLES "Build example applications" ON)
