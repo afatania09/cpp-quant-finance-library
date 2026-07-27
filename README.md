@@ -16,8 +16,11 @@ numerical validation and cross-platform continuous integration.
 | Black–Scholes–Merton | European calls and puts with continuous dividends |
 | Analytic Greeks | Delta, gamma, vega, theta and rho |
 | Cox–Ross–Rubinstein tree | European and American exercise |
+| Recombining trinomial tree | European and American exercise with three-state transitions |
 | Monte Carlo | Risk-neutral GBM, antithetic variates, standard error and 95% confidence interval |
+| Heston simulation | Correlated spot/variance paths with full-truncation Euler discretisation |
 | Implied volatility | Robust bisection subject to no-arbitrage price bounds |
+| Fixed income | Zero curves, coupon bonds, YTM, duration and convexity |
 | Portfolio risk | Historical P&L, value at risk and expected shortfall |
 
 ## Architecture
@@ -79,7 +82,8 @@ const qf::MonteCarloResult simulation = qf::monte_carlo_price(call);
 For the parameters above, the analytic call value is approximately `9.227006`.
 The test suite independently checks this reference value, put–call parity,
 lattice convergence, American-option dominance, implied-volatility recovery,
-Greek signs, Monte Carlo confidence intervals and portfolio-risk invariants.
+Greek signs, Monte Carlo confidence intervals, Heston reproducibility, par-bond
+pricing, yield recovery, curve interpolation and portfolio-risk invariants.
 
 ## Numerical choices
 
@@ -89,6 +93,10 @@ Greek signs, Monte Carlo confidence intervals and portfolio-risk invariants.
 - Implied volatility uses bisection rather than unconstrained Newton iterations,
   prioritising reliable convergence for a portfolio demonstration.
 - Historical risk is reported as positive loss magnitudes.
+- The zero curve linearly interpolates continuously compounded zero rates and
+  discounts each bond cash flow at its corresponding maturity.
+- Heston variance is advanced with a full-truncation Euler scheme to prevent
+  negative variance entering diffusion terms.
 
 ## Roadmap
 
@@ -102,4 +110,3 @@ Greek signs, Monte Carlo confidence intervals and portfolio-risk invariants.
 
 This project is for education, research and portfolio demonstration. It is not
 investment advice and is not validated for production trading or risk reporting.
-
