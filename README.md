@@ -1,6 +1,6 @@
 # C++ Quantitative Finance Library
 
-[![C++ CI](https://github.com/afatania09/cpp-quant-finance-library/actions/workflows/ci.yml/badge.svg)](https://github.com/afatania09/cpp-quant-finance-library/actions/workflows/ci.yml)
+[![Manual C++ CI](https://github.com/afatania09/cpp-quant-finance-library/actions/workflows/ci.yml/badge.svg)](https://github.com/afatania09/cpp-quant-finance-library/actions/workflows/ci.yml)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C.svg)](https://isocpp.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -132,6 +132,10 @@ The project distinguishes sampling error, discretisation error and model risk.
 See [model validation and limitations](docs/MODEL_VALIDATION.md) for the
 automated validation matrix, assumptions, known limitations and conditions
 under which the library should not be used.
+
+Continuous integration is started deliberately from GitHub's **Actions** tab
+rather than on every commit. This avoids repeated builds and email notifications
+while related connector-backed file updates are published as successive commits.
 
 ## Disclaimer
 
