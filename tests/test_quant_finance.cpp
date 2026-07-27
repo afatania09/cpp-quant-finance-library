@@ -78,6 +78,19 @@ int main() {
         expect_true(
             call_price >= mc.confidence_low && call_price <= mc.confidence_high,
             "analytic price lies in Monte Carlo confidence interval");
+        const auto parallel_mc =
+            qf::monte_carlo_price_parallel(call, 400'000, 4, 7);
+        expect_true(
+            call_price >= parallel_mc.confidence_low &&
+                call_price <= parallel_mc.confidence_high,
+            "analytic price lies in parallel Monte Carlo confidence interval");
+        const auto parallel_repeat =
+            qf::monte_carlo_price_parallel(call, 400'000, 4, 7);
+        expect_near(
+            parallel_mc.price,
+            parallel_repeat.price,
+            0.0,
+            "parallel Monte Carlo reproducibility");
 
         expect_near(
             qf::implied_volatility(call_price, call),
