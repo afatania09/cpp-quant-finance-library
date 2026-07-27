@@ -6,9 +6,12 @@
 
 #include "quantfinance/binomial_tree.hpp"
 #include "quantfinance/black_scholes.hpp"
+#include "quantfinance/fixed_income.hpp"
+#include "quantfinance/heston.hpp"
 #include "quantfinance/implied_volatility.hpp"
 #include "quantfinance/monte_carlo.hpp"
 #include "quantfinance/risk.hpp"
+#include "quantfinance/trinomial_tree.hpp"
 
 namespace {
 
@@ -59,9 +62,17 @@ int main() {
         expect_near(parity_left, parity_right, 1e-10, "put-call parity");
 
         expect_near(qf::binomial_price(call, 2'000), call_price, 2e-3, "binomial convergence");
+        expect_near(
+            qf::trinomial_price(call, 1'000),
+            call_price,
+            2e-3,
+            "trinomial convergence");
         expect_true(
             qf::binomial_price(put, 1'000, qf::ExerciseStyle::American) >= put_price,
             "American put dominates European put");
+        expect_true(
+            qf::trinomial_price(put, 500, qf::ExerciseStyle::American) >= put_price,
+            "trinomial American put dominates European put");
 
         const auto mc = qf::monte_carlo_price(call, 400'000, 7);
         expect_true(
@@ -77,6 +88,39 @@ int main() {
         const auto greeks = qf::black_scholes_greeks(call);
         expect_true(greeks.delta > 0.0 && greeks.delta < 1.0, "call delta bounds");
         expect_true(greeks.gamma > 0.0 && greeks.vega > 0.0, "gamma and vega signs");
+
+        const qf::HestonParameters heston{
+            .mean_reversion = 2.0,
+            .long_run_variance = 0.04,
+            .volatility_of_variance = 0.30,
+            .correlation = -0.70,
+            .initial_variance = 0.04,
+        };
+        const auto heston_a = qf::heston_monte_carlo_price(call, heston, 20'000, 100, 19);
+        const auto heston_b = qf::heston_monte_carlo_price(call, heston, 20'000, 100, 19);
+        expect_near(heston_a.price, heston_b.price, 0.0, "Heston reproducibility");
+        expect_true(
+            heston_a.price > 0.0 && heston_a.standard_error > 0.0,
+            "Heston price and error are positive");
+
+        const auto par_bond = qf::coupon_bond_analytics(100.0, 0.05, 5.0, 2, 0.05);
+        expect_near(par_bond.price, 100.0, 1e-10, "par bond pricing");
+        expect_near(
+            qf::yield_to_maturity(par_bond.price, 100.0, 0.05, 5.0, 2),
+            0.05,
+            1e-9,
+            "yield-to-maturity recovery");
+        expect_true(
+            par_bond.macaulay_duration > 0.0 &&
+                par_bond.modified_duration < par_bond.macaulay_duration &&
+                par_bond.convexity > 0.0,
+            "bond risk measures");
+
+        const qf::ZeroCurve curve({1.0, 2.0, 5.0}, {0.03, 0.04, 0.05});
+        expect_near(curve.zero_rate(1.5), 0.035, 1e-12, "zero-curve interpolation");
+        expect_true(
+            qf::coupon_bond_price(100.0, 0.04, 5.0, 2, curve) > 0.0,
+            "curve-based bond pricing");
 
         const std::vector<double> weights{0.6, 0.4};
         const std::vector<std::vector<double>> returns{
@@ -99,4 +143,3 @@ int main() {
     }
     return failures == 0 ? 0 : 1;
 }
-
