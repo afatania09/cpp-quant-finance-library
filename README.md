@@ -9,6 +9,9 @@ market-risk analytics. The project is designed as an auditable quantitative
 finance portfolio: every model has a clear interface, deterministic examples,
 numerical validation and cross-platform continuous integration.
 
+Version 3 adds a usable terminal calculator, parallel simulation, explicit
+convergence experiments and documented model limitations.
+
 ## Implemented models
 
 | Module | Methods and outputs |
@@ -17,7 +20,7 @@ numerical validation and cross-platform continuous integration.
 | Analytic Greeks | Delta, gamma, vega, theta and rho |
 | Cox–Ross–Rubinstein tree | European and American exercise |
 | Recombining trinomial tree | European and American exercise with three-state transitions |
-| Monte Carlo | Risk-neutral GBM, antithetic variates, standard error and 95% confidence interval |
+| Monte Carlo | Serial and multithreaded GBM, antithetic variates, standard error and 95% confidence interval |
 | Heston simulation | Correlated spot/variance paths with full-truncation Euler discretisation |
 | Implied volatility | Robust bisection subject to no-arbitrage price bounds |
 | Fixed income | Zero curves, coupon bonds, YTM, duration and convexity |
@@ -29,6 +32,9 @@ numerical validation and cross-platform continuous integration.
 include/quantfinance/   Public, reusable API
 src/                    Model implementations
 examples/               Executable pricing demonstration
+apps/                   Interactive terminal pricing calculator
+benchmarks/             Runtime and numerical-convergence experiments
+docs/                   Validation evidence, assumptions and limitations
 tests/                  Numerical and financial invariants
 .github/workflows/      Linux, macOS and Windows CI
 ```
@@ -50,6 +56,18 @@ Run the example on Linux or macOS:
 
 ```bash
 ./build/pricing_demo
+```
+
+Price your own option or bond interactively:
+
+```bash
+./build/quant_cli
+```
+
+Generate convergence and runtime evidence:
+
+```bash
+./build/pricing_benchmark
 ```
 
 On a multi-configuration Windows build:
@@ -90,6 +108,8 @@ pricing, yield recovery, curve interpolation and portfolio-risk invariants.
 - The lattice uses the Cox–Ross–Rubinstein parametrisation and backward induction.
 - The simulation uses a fixed seed by default for reproducible tests and
   antithetic normal shocks for variance reduction.
+- The parallel simulation divides paths across standard C++ worker threads,
+  maintains per-thread moments and combines them after joining.
 - Implied volatility uses bisection rather than unconstrained Newton iterations,
   prioritising reliable convergence for a portfolio demonstration.
 - Historical risk is reported as positive loss magnitudes.
@@ -105,6 +125,13 @@ pricing, yield recovery, curve interpolation and portfolio-risk invariants.
 - Bootstrapped curves, floating-rate instruments and interest-rate swaps
 - Sensitivity benchmarking and parallel Monte Carlo
 - Python bindings for comparison with the native C++ engine
+
+## Validation
+
+The project distinguishes sampling error, discretisation error and model risk.
+See [model validation and limitations](docs/MODEL_VALIDATION.md) for the
+automated validation matrix, assumptions, known limitations and conditions
+under which the library should not be used.
 
 ## Disclaimer
 
