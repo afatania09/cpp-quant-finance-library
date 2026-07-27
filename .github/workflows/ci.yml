@@ -1,8 +1,9 @@
 name: C++ CI
 
 on:
-  push:
-  pull_request:
+  # Start deliberately from the Actions tab. Connector-backed updates arrive
+  # as successive commits, so automatic push builds created excessive emails.
+  workflow_dispatch:
 
 jobs:
   build-and-test:
