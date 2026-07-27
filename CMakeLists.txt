@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.20)
-project(cpp_quant_finance_library VERSION 2.0.0 LANGUAGES CXX)
+project(cpp_quant_finance_library VERSION 3.0.0 LANGUAGES CXX)
 
 option(QF_BUILD_TESTS "Build the test suite" ON)
 option(QF_BUILD_EXAMPLES "Build example applications" ON)
+option(QF_BUILD_BENCHMARKS "Build performance and convergence benchmarks" ON)
+
+find_package(Threads REQUIRED)
 
 add_library(quantfinance
     src/black_scholes.cpp
@@ -15,6 +18,7 @@ add_library(quantfinance
     src/risk.cpp
 )
 add_library(QuantFinance::quantfinance ALIAS quantfinance)
+target_link_libraries(quantfinance PUBLIC Threads::Threads)
 
 target_include_directories(quantfinance
     PUBLIC
@@ -32,6 +36,14 @@ endif()
 if(QF_BUILD_EXAMPLES)
     add_executable(pricing_demo examples/pricing_demo.cpp)
     target_link_libraries(pricing_demo PRIVATE QuantFinance::quantfinance)
+
+    add_executable(quant_cli apps/quant_cli.cpp)
+    target_link_libraries(quant_cli PRIVATE QuantFinance::quantfinance)
+endif()
+
+if(QF_BUILD_BENCHMARKS)
+    add_executable(pricing_benchmark benchmarks/pricing_benchmark.cpp)
+    target_link_libraries(pricing_benchmark PRIVATE QuantFinance::quantfinance)
 endif()
 
 include(CTest)
