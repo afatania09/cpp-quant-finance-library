@@ -7,8 +7,11 @@ option(QF_BUILD_EXAMPLES "Build example applications" ON)
 add_library(quantfinance
     src/black_scholes.cpp
     src/binomial_tree.cpp
+    src/trinomial_tree.cpp
     src/monte_carlo.cpp
+    src/heston.cpp
     src/implied_volatility.cpp
+    src/fixed_income.cpp
     src/risk.cpp
 )
 add_library(QuantFinance::quantfinance ALIAS quantfinance)
@@ -37,4 +40,3 @@ if(BUILD_TESTING AND QF_BUILD_TESTS)
     target_link_libraries(quantfinance_tests PRIVATE QuantFinance::quantfinance)
     add_test(NAME quantfinance_tests COMMAND quantfinance_tests)
 endif()
-
