@@ -19,5 +19,10 @@ struct MonteCarloResult {
     std::size_t paths = 100'000,
     std::uint64_t seed = 42);
 
-}  // namespace qf
+[[nodiscard]] MonteCarloResult monte_carlo_price_parallel(
+    const Option& option,
+    std::size_t paths = 1'000'000,
+    std::size_t thread_count = 0,
+    std::uint64_t seed = 42);
 
+}  // namespace qf
